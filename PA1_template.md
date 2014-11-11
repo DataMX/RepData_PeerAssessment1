@@ -12,7 +12,8 @@ Using default `echo = TRUE` for the entire R markdown document.
 1.The piece of code changes the directory into the working directory using `setwd()`, unzips with `unzip()` and loads the file with `read.csv()`.  
 2.The `lubridate` package loaded is used to convert dates.  The `dplyr` package will be used for data table manipulation throughout.  I convert the interval to a factor for future steps.  
   
-```{r loadfile, message=FALSE}
+
+```r
 library (lubridate)
 library (dplyr)  
 setwd("~/Documents/Coursera_Data/ReproducibleResearch/RepData_PeerAssessment1")
@@ -22,7 +23,7 @@ activity <- read.csv("~/Documents/Coursera_Data/ReproducibleResearch/RepData_Pee
 
 activity$date <-ymd(activity$date)  
 activity$interval <-as.factor(activity$interval)  
-```  
+```
 
 ## What is the mean number of steps taken per day?  
 
@@ -30,7 +31,8 @@ activity$interval <-as.factor(activity$interval)
 `summarize()` and `group_by()` to calculate Total steps per day for each interval.  I did not remove the `NA`s for the calculation of Total Steps as `hist()` appears to ignore the `NA`s when calculating the histogram.  If I remove the `NA`s from the `sum()` calculation, zeros are entered in the summarise table and the resulting histogram would not have the correct frequencies.  
 2.I then calculated the mean and median using `mean()` and `median()` with `na.rm = TRUE` and reported the values below the Histogram.  
 
-```{r meansteps, fig.width = 4}
+
+```r
 stepsbyday <- summarize(group_by(activity, date),  
                             TotalSteps = sum (steps, na.rm = FALSE))
 hist(stepsbyday$TotalSteps, 
@@ -38,18 +40,23 @@ hist(stepsbyday$TotalSteps,
         xlab = "Total Steps per Day", 
         main = "Histogram of Total Steps per Day",
         breaks = 8)  
+```
+
+![plot of chunk meansteps](figure/meansteps-1.png) 
+
+```r
 mean <- format(mean(stepsbyday$TotalSteps, na.rm = TRUE), digits = 5)  
 median <- median(stepsbyday$TotalSteps, na.rm = TRUE)  
-
-```  
-The mean is **`r mean`** steps.  The median is **`r median`** steps.    
+```
+The mean is **10766** steps.  The median is **10765** steps.    
 
 ## What is the average daily activity pattern?  
 
 1.I used `summarize()` and `group_by()` to average the number of step per 5-minute interval accross the entire 2 month dataset. I then used `plot()` with `type = 'l'` to plot the average daily pattern in a time series plot.
 2.I used `which.max()`find the out when the maximum number of steps was taken and reported it below the line plot.  
 
-```{r dailypattern}
+
+```r
 stepsbyinterval <- summarize(group_by(activity, interval), 
                              meansteps = mean(steps, na.rm = TRUE))
 plot(as.numeric(stepsbyinterval$interval), stepsbyinterval$meansteps, 
@@ -58,10 +65,15 @@ plot(as.numeric(stepsbyinterval$interval), stepsbyinterval$meansteps,
      xlab = "5-min Interval", 
      ylab = "Average Number of Steps Taken", 
      main = "Average Daily Step Pattern (5-minute intervals) from 0ct. to Nov. 2012")
+```
+
+![plot of chunk dailypattern](figure/dailypattern-1.png) 
+
+```r
 max_number <- round(max(stepsbyinterval$meansteps))  
 max_interval_number <- which.max(stepsbyinterval$meansteps)  
-```  
-The maximum number of steps (averaged across all days) is **`r max_number`** steps and taken at interval **`r max_interval_number`**. 
+```
+The maximum number of steps (averaged across all days) is **206** steps and taken at interval **104**. 
 
 ## Imputing missing values  
 1.This bit of code calculates the number of `NA`s in the dataset and reports in below the plot.  
@@ -69,7 +81,8 @@ The maximum number of steps (averaged across all days) is **`r max_number`** ste
 3.I copied the original dataset to a new name and then replaced `NA`s using `roughfix()` from the `randomForest` package.  `NA`s are replaced with column medians with this function.    
 4.I repeat the procedure from above to create a new histogram with the filled in datasets and report the mean and median values below.  
 
-```{r missingvalues, message=FALSE, fig.width = 4}
+
+```r
 missing <- sum(is.na(activity$steps)) 
 percent <- format(missing/nrow(activity) * 100, digits = 2)
 median_total <- median(activity$steps, na.rm = TRUE)
@@ -87,16 +100,22 @@ hist(stepsbyday_no_na$TotalSteps,
      xlab = "Total Steps per Day",
      main = "Histogram of Total Steps per Day",
      breaks = 8)  
+```
+
+![plot of chunk missingvalues](figure/missingvalues-1.png) 
+
+```r
 mean_no_na<- format(mean(stepsbyday_no_na$TotalSteps, na.rm = FALSE), digits = 4)
 median_no_na <- format(median(stepsbyday_no_na$TotalSteps, na.rm = FALSE ), digits = 5)
 ```
-There are **`r missing`** missing values in the dataset, which is **`r percent`%** of the data.  The mean when NAs are replaced with a median value of **`r median_total`** is **`r mean_no_na`** steps and the median is **`r median_no_na`** steps.  Both of these values are lower then the initial values of **`r mean`** and **`r median`**.     
+There are **2304** missing values in the dataset, which is **13%** of the data.  The mean when NAs are replaced with a median value of **0** is **9354** steps and the median is **10395** steps.  Both of these values are lower then the initial values of **10766** and **10765**.     
 
 ## Are there differences in activity patterns between weekdays and weekends?
 1.I use `wday()` from lubridate to identify day of week. I then use `grepl()` to indicate if it's Saturday(7) or Sunday(1).  I convert weekend from `TRUE` and `FALSE` into a factor with the words, weekend and weekday.  
 2. I use `lattice` package to plot but prior to plotting there's some data manipulation to be done.  I count my steps, as above, with `summarise()` and `group_by()` and `sum()`.  After that I change interval to a numeric type.  These conversions were done to prior to plotting for plotting convenience.
 
-```{r weekendplots}
+
+```r
 activity_no_na$wday <- wday(activity_no_na$date)
 activity_no_na$weekend <- grepl('1|7', activity_no_na$wday)
 
@@ -119,8 +138,9 @@ xyplot(meansteps ~ interval | weekend, data = stepsbyinterval_no_na,
        ylab = "Number of steps", 
        type = "l",
        layout = c(1, 2))
-
 ```
+
+![plot of chunk weekendplots](figure/weekendplots-1.png) 
 Yes, there are differences between weekend and weekday step patterns.
 
 **Note to peer reviewers.  I am new to markdown.  If there are things I could do to make the report more readable, please let me know.
