@@ -55,7 +55,7 @@ The mean is **10766** steps.  The median is **10765** steps.
 
 ## What is the average daily activity pattern?  
 
-1. I used `summarize()` and `group_by()` to average the number of step per 5-minute interval across the entire 2 month dataset. I then used `plot()` with `type = 'l'` to plot the average daily pattern in a time series line plot.
+1. I used `summarize()` and `group_by()` to average the number of steps per 5-minute interval across the entire 2 month dataset. I then used `plot()` with `type = 'l'` to plot the average daily pattern in a time series line plot.
 
 2. I used `max()` and `which.max()` to find out what the maximum number of steps was and when it was taken.  Values are reported below the line plot.  
 
@@ -84,7 +84,7 @@ The maximum number of steps (averaged across all days) is **206** steps and take
 
 1. This bit of code calculates the number of `NA`s in the dataset and reports it below the plot.  
 
-2. My strategy for imputing missing values was to replace the `NA`s with the median for the entire data set.  
+2. My strategy for imputing missing values was to replace the `NA`s with the median for each interval.  
 
 3. I copied the original dataset to a new name. I used `group_by()` and `mutate()` to replace `NA`s using `roughfix()` from the `randomForest` package.  `NA`s are replaced with the interval median with this combination of functions.  I printed summaries of the initial and `NA` replaced datasets for comparison.  The majority of replaced `NA`s were replaced with zeros.
 

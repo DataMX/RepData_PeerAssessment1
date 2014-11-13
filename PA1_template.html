@@ -251,7 +251,7 @@ median &lt;- median(stepsbyday$TotalSteps, na.rm = TRUE)
 <h2>What is the average daily activity pattern?</h2>
 
 <ol>
-<li><p>I used <code>summarize()</code> and <code>group_by()</code> to average the number of step per 5-minute interval across the entire 2 month dataset. I then used <code>plot()</code> with <code>type = &#39;l&#39;</code> to plot the average daily pattern in a time series line plot.</p></li>
+<li><p>I used <code>summarize()</code> and <code>group_by()</code> to average the number of steps per 5-minute interval across the entire 2 month dataset. I then used <code>plot()</code> with <code>type = &#39;l&#39;</code> to plot the average daily pattern in a time series line plot.</p></li>
 <li><p>I used <code>max()</code> and <code>which.max()</code> to find out what the maximum number of steps was and when it was taken.  Values are reported below the line plot.  </p></li>
 </ol>
 
@@ -277,7 +277,7 @@ max_interval_number &lt;- which.max(stepsbyinterval$meansteps)
 
 <ol>
 <li><p>This bit of code calculates the number of <code>NA</code>s in the dataset and reports it below the plot.  </p></li>
-<li><p>My strategy for imputing missing values was to replace the <code>NA</code>s with the median for the entire data set.  </p></li>
+<li><p>My strategy for imputing missing values was to replace the <code>NA</code>s with the median for each interval.  </p></li>
 <li><p>I copied the original dataset to a new name. I used <code>group_by()</code> and <code>mutate()</code> to replace <code>NA</code>s using <code>roughfix()</code> from the <code>randomForest</code> package.  <code>NA</code>s are replaced with the interval median with this combination of functions.  I printed summaries of the initial and <code>NA</code> replaced datasets for comparison.  The majority of replaced <code>NA</code>s were replaced with zeros.</p></li>
 <li><p>I use the same steps as above to create a new histogram with the filled in <code>NA</code> dataset and then reported the mean and median values below.  </p></li>
 </ol>
