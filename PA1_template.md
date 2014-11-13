@@ -86,7 +86,7 @@ The maximum number of steps (averaged across all days) is **206** steps and take
 
 2. My strategy for imputing missing values was to replace the `NA`s with the median for the entire data set.  
 
-3. I copied the original dataset to a new name and then replaced `NA`s using `roughfix()` from the `randomForest` package.  `NA`s are replaced with the column median with this function, if numeric.    
+3. I copied the original dataset to a new name. I used `group_by()` and `mutate()` to replace `NA`s using `roughfix()` from the `randomForest` package.  `NA`s are replaced with the interval median with this combination of functions.  I printed summaries of the initial and `NA` replaced datasets for comparison.  The majority of replaced `NA`s were replaced with zeros.
 
 4. I use the same steps as above to create a new histogram with the filled in `NA` dataset and then reported the mean and median values below.  
 
@@ -100,8 +100,25 @@ activity_no_na <- activity
 activity_no_na <- tbl_df(activity_no_na)
 
 library (randomForest)
-activity_no_na$steps <- na.roughfix(activity_no_na$steps)
+activity_no_na <- activity_no_na %>% group_by(interval) %>% mutate(steps = na.roughfix(steps))
+summary(activity$steps)
+```
 
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##    0.00    0.00    0.00   37.38   12.00  806.00    2304
+```
+
+```r
+summary(activity_no_na$steps)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##       0       0       0      33       8     806
+```
+
+```r
 stepsbyday_no_na <- summarize(group_by(activity_no_na, date), 
                               TotalSteps = sum(steps))
 hist(stepsbyday_no_na$TotalSteps,
@@ -118,7 +135,7 @@ mean_no_na<- format(mean(stepsbyday_no_na$TotalSteps, na.rm = FALSE), digits = 4
 median_no_na <- format(median(stepsbyday_no_na$TotalSteps, na.rm = FALSE ), digits = 5)
 ```
 
-There are **2304** missing values in the dataset, which is **13%** of the data.  The mean when `NA`s are replaced with a median value of **0** is **9354** steps and the median is **10395** steps.  Both of these values are lower then the initial values of **10766** and **10765**.  
+There are **2304** missing values in the dataset, which is **13%** of the data.  The mean when `NA`s are replaced with the median value per interval is **9504** steps and the median is **10395** steps.  Both of these values are lower then the initial values of **10766** and **10765**.  
 
 There are other strategies that could be used to replace the `NA`s.  This strategy happened to be the one I could implement without problems.
 

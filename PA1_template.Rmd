@@ -74,7 +74,7 @@ The maximum number of steps (averaged across all days) is **`r max_number`** ste
 
 2. My strategy for imputing missing values was to replace the `NA`s with the median for the entire data set.  
 
-3. I copied the original dataset to a new name and then replaced `NA`s using `roughfix()` from the `randomForest` package.  `NA`s are replaced with the column median with this function, if numeric.    
+3. I copied the original dataset to a new name. I used `group_by()` and `mutate()` to replace `NA`s using `roughfix()` from the `randomForest` package.  `NA`s are replaced with the interval median with this combination of functions.  I printed summaries of the initial and `NA` replaced datasets for comparison.  The majority of replaced `NA`s were replaced with zeros.
 
 4. I use the same steps as above to create a new histogram with the filled in `NA` dataset and then reported the mean and median values below.  
 
@@ -87,8 +87,9 @@ activity_no_na <- activity
 activity_no_na <- tbl_df(activity_no_na)
 
 library (randomForest)
-activity_no_na$steps <- na.roughfix(activity_no_na$steps)
-
+activity_no_na <- activity_no_na %>% group_by(interval) %>% mutate(steps = na.roughfix(steps))
+summary(activity$steps)
+summary(activity_no_na$steps)
 stepsbyday_no_na <- summarize(group_by(activity_no_na, date), 
                               TotalSteps = sum(steps))
 hist(stepsbyday_no_na$TotalSteps,
@@ -100,7 +101,7 @@ mean_no_na<- format(mean(stepsbyday_no_na$TotalSteps, na.rm = FALSE), digits = 4
 median_no_na <- format(median(stepsbyday_no_na$TotalSteps, na.rm = FALSE ), digits = 5)
 ```  
 
-There are **`r missing`** missing values in the dataset, which is **`r percent`%** of the data.  The mean when `NA`s are replaced with a median value of **`r median_total`** is **`r mean_no_na`** steps and the median is **`r median_no_na`** steps.  Both of these values are lower then the initial values of **`r mean`** and **`r median`**.  
+There are **`r missing`** missing values in the dataset, which is **`r percent`%** of the data.  The mean when `NA`s are replaced with the median value per interval is **`r mean_no_na`** steps and the median is **`r median_no_na`** steps.  Both of these values are lower then the initial values of **`r mean`** and **`r median`**.  
 
 There are other strategies that could be used to replace the `NA`s.  This strategy happened to be the one I could implement without problems.
 
