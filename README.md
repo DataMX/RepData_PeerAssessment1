@@ -1,3 +1,6 @@
+To Peer Reviewers:
+There are two sets of figures.  The one in PA1_template_files/figure-html/ are the latest version and the ones embedded in the latest commit markdown files.  Please feel free give suggestions on how to make my markdown more reader friendly.  Thank you.
+
 ## Introduction
 
 It is now possible to collect a large amount of data about personal
